@@ -203,6 +203,11 @@ class HrAnalyticTimesheet(orm.Model):
         """Ensure all hr_analytic_timesheet_id is always False"""
         return dict.fromkeys(ids, False)
 
+    def _get_dummy_hours(
+            self, cr, uid, ids, names, arg, context=None):
+        """Ensure all hr_analytic_timesheet_id is always 0 just to avoid crashes"""
+        return dict.fromkeys(ids, 0)
+
     @api.multi
     def on_change_account_id(self, account_id, user_id=False):
         ''' Validate the relation between the project and the task.
@@ -231,7 +236,10 @@ class HrAnalyticTimesheet(orm.Model):
     _columns = {
         'hr_analytic_timesheet_id': fields.function(
             _get_dummy_hr_analytic_timesheet_id, string='Related Timeline Id',
-            type='boolean')
+            type='boolean'),
+        'hours': fields.function(
+            _get_dummy_hours, help="Just avoid module project_timesheet crash",
+        )
     }
 
 
